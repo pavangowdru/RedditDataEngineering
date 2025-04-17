@@ -1,0 +1,83 @@
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: custom-airflow:2.7.1-python3.11
+  env_file:
+    - airflow.env
+  environment:
+    - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+    - AIRFLOW__CELERY__BROKER_URL=redis://redis:6379/0
+    - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://postgres:postgres@postgres:5432/airflow_reddit
+    - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://postgres:postgres@postgres:5432/airflow_reddit
+    - AIRFLOW__CORE__FERNETIC_KEY=ZQbnMLh1KJ0eXH6H4bD8KJK7NxCgkTYYnQ8PLVZ3ZTI=
+    - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  volumes:
+    - ./config:/opt/airflow/config
+    - ./dags:/opt/airflow/dags
+    - ./data:/opt/airflow/data
+    - ./etls:/opt/airflow/etls
+    - ./logs:/opt/airflow/logs
+    - ./pipelines:/opt/airflow/pipelines
+    - ./tests:/opt/airflow/tests
+    - ./utils:/opt/airflow/utils
+    - ./requirements.txt:/opt/airflow/requirements.txt
+    #- ./airflow.cfg:/usr/local/airflow/airflow.cfg
+  depends_on:
+    - postgres
+    - redis
+
+services:
+  postgres:
+    image: postgres:15.3-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: airflow_reddit
+      POSTGRES_PORT: 5432
+    # volumes:
+    #   - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    # networks:
+    #   - airflow_network
+    # restart: always
+
+  redis:
+    image: redis:7.0.11-alpine
+    ports:
+      - "6379:6379"
+    # networks:
+    #   - airflow_network
+    # restart: always
+
+  airflow-init:
+    <<: *airflow-common
+    command: >
+      bash -c "pip install --no-cache-dir -r /opt/airflow/requirements.txt && airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin"
+    # networks:
+    #   - airflow_network
+    restart: "no"
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    # networks:
+    #   - airflow_network
+    # restart: always
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    # networks:
+    #   - airflow_network
+    # restart: always
+
+  airflow-worker:
+    <<: *airflow-common
+    command: celery worker
+    # networks:
+    #   - airflow_network
+    # restart: always
