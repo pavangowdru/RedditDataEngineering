@@ -1,10 +1,10 @@
-from etls.reddit_etls import connect_reddit, extract_posts, transform_posts, load_to_csv
-from utils.constants import CLIENT_ID, SECRET, USER_AGENT, OUTPUT_PATH
+from etls.reddit_etls import connect_reddit, extract_posts, transform_posts, load_data_to_csv
+from utils.constants import REDDIT_CLIENT_ID, REDDIT_SECRET, OUTPUT_PATH
 import pandas as pd
 
 def reddit_pipeline(filename: str, subreddit: str, time_filter='day', limit=None) :
     #connecting to reddit instance
-    isinstance = connect_reddit(CLIENT_ID, SECRET, USER_AGENT)
+    isinstance = connect_reddit(REDDIT_CLIENT_ID, REDDIT_SECRET, "etl_script by u/Forsaken-Sundae2712")
     #extraction
     posts = extract_posts(isinstance, subreddit, time_filter, limit)
     #transformation
@@ -12,5 +12,7 @@ def reddit_pipeline(filename: str, subreddit: str, time_filter='day', limit=None
     transformed_posts = transform_posts(transformed_posts)
     
     #loading
-    #load_to_database(transformed_posts, filename)
-    load_to_csv(transformed_posts, OUTPUT_PATH)
+    file_path = f'{OUTPUT_PATH}/{filename}.csv'
+    load_data_to_csv(transformed_posts, file_path)
+
+    return file_path

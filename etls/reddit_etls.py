@@ -2,6 +2,7 @@ from praw import Reddit
 from utils.constants import POST_FIELDS
 import numpy as np
 import pandas as pd
+import os
 
 def connect_reddit(client_id, client_secret, user_agent) -> Reddit:
     try:
@@ -18,13 +19,12 @@ def connect_reddit(client_id, client_secret, user_agent) -> Reddit:
     
 def extract_posts(reddit_instance, subreddit_name, time_filter='day', limit=None):
     try:
+        
         subreddit = reddit_instance.subreddit(subreddit_name)
 
         posts_list = []
 
-        if time_filter != 'day' or time_filter != 'week' or time_filter != 'month' or time_filter != 'year':
-            raise ValueError("Invalid time filter. Use 'day', 'week', 'month', or 'year'.") 
-        else:
+        if time_filter == 'day' or time_filter == 'week' or time_filter == 'month' or time_filter == 'year':
             posts = subreddit.top(time_filter, limit=limit)
 
             for post in posts:
@@ -32,6 +32,9 @@ def extract_posts(reddit_instance, subreddit_name, time_filter='day', limit=None
                 print(post_dict)
                 post = {key: post_dict[key] for key in POST_FIELDS}
                 posts_list.append(post)
+
+        else:
+            raise ValueError("Invalid time filter. Use 'day', 'week', 'month', or 'year'.") 
         
         return posts_list
     
@@ -41,8 +44,8 @@ def extract_posts(reddit_instance, subreddit_name, time_filter='day', limit=None
     
 def transform_posts(posts_df : pd.DataFrame) -> pd.DataFrame:
     try:
-        posts_df['created_utc'] = pd.to_datetime(post['created_utc'], unit='s')
-        posts_df['over_18'] = np.where((posts_df['over_18']==True), 1, 0)
+        #posts_df['created_utc'] = pd.to_datetime(posts_df['created_utc'], unit='s')
+        #posts_df.over_18 = np.where((posts_df.over_18==True), 1, 0)
         posts_df['author'] = posts_df['author'].astype(str) 
 
         return posts_df
@@ -51,9 +54,15 @@ def transform_posts(posts_df : pd.DataFrame) -> pd.DataFrame:
         print(f"Error transforming posts: {e}")
         return None
 
-def load_data_to_csv(data: pd.DataFrame, filename: str) -> None:
+def load_data_to_csv(df: pd.DataFrame, path: str) -> None:
     try:
-        data.to_csv(f"output/{filename}.csv", index=False)
-        print(f"Data loaded to {filename}.csv successfully.")
+        # if not os.path.exists(path):
+        #     os.makedirs(path)
+
+        if df is not None:
+            df.to_csv(path, index=False)
+            print(f"Data loaded to {path} successfully.")
+        else:
+            logging.info("No data to write to CSV.")        
     except Exception as e:
         print(f"Error loading data to CSV: {e}")

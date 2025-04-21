@@ -1,0 +1,309 @@
+id,title,selftext,score,num_comments,author,created_utc,url,upvote_ratio,over_18,edited,spoiler,stickied
+1k2e68y,Some of you aren't writing tests. Start writing tests.,"[This came to my attention in this post.](https://www.reddit.com/r/dataengineering/comments/1k1pl3y/a_databricks_project_a_tight_deadline_and_a_pip/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button) One of \*the big things\* that separates a data analyst from a data engineer, imo, is whether or not you're capable of testing your code. There's a lot of learners around here right now so I'm going to write this for your benefit. I hope it helps!
+
+# Caveat
+
+I am not a data engineer. I am a PM for data systems, was a data analyst in my previous life, and have worked with some very good senior contributors and architects. I've learned a lot from them and owe a lot of my career success to their lessons.
+
+I am going to try to pass on the little that I know. If you know better than I do, pop into the comments below and feel free to yell at me.
+
+Also, testing is a wide, varied field, this is a brief synopsis, definitely do more reading on your own.
+
+# When do I need to test my code?
+
+Data transformations happen in a lot of different ways. When you work with small data, you might write an excel macro, or a quick little script for manipulation. Not writing tests for these is largely fine, especially when it's something **you** do just for **your** work. Coding in isolation can benefit from tests, but it's not the primary concern.
+
+You really need to start thinking about writing tests when two things happen:
+
+1. People that are not you start touching your code
+2. The code you write becomes part of a complex system
+
+The exception to these two rules is when you're creating portfolio projects. You should write tests for these, because they make you look smart to your interviewers.
+
+# Why do I need to test my code?
+
+Tests take **implicit** knowledge & context about the purpose of your code / what it does and makes that knowledge **explicit**.
+
+This is required to help other people start using the code that you write - if they're new to it, the tests help them understand the purpose of each function and give them guard rails as they make changes.
+
+When your code becomes incorporated into a larger system, this is particularly true - it's more likely you'll have multiple folks working with you, and other things that are happening elsewhere in the system might necessitate making changes to your code.
+
+# What types of tests are there?
+
+I can name at least 4 different types of tests off the dome. There are more but I'm typing extemporaneously and not for clout, so you get what's in my memory:
+
+* Unit tests - these test small, discrete parts of your code.
+   * Example: in your pipeline, you write a small function that lowercases names and strips certain characters. You need this to work in a predictable manner, so you write a unit test for it.
+* Integration tests - these test the boundaries between different functions to make sure the output of one feeds the input of the other correctly.
+   * Example: in your pipeline, one function extracts the data from an API, and another takes that extracted data and does a transform. An integration test would examine whether the output of the first function results is correct for the second.
+* End-to-end tests - these test whether, given a correct input, the whole of your code produces the correct output. These are hard, but the more of these you can do, the better off you'll be.
+   * Example: you have a pipeline that reads data from an API and inserts it into your database. You mock out a fake input and run your whole pipeline against it, then verify that the expected output is in the database.
+* Data validation tests - these test whether the data you're being passed, or the data that's landing in a given system, are of the expected shape and type.
+   * Example: your pipeline expects a json blob that has strings in it. Data validation tests would ensure that, once extracted or placed in a holding area, the data is both a json blob with the correct keys and the data types for those keys are all strings
+
+# How do I write tests?
+
+This is already getting longer than I have patience for, it's Friday at 4pm, so again, you're going to get some crib notes.
+
+Whatever language you're using should have some kind of built-in testing capability. SQL does not, unfortunately - it's why you tend to wrap SQL in a different programming language like Python. If you only have SQL, some of what I write below won't apply - you're most likely only doing end-to-end or data validation testing.
+
+Start by writing functional tests. For each function in your code, write at least one positive case (where it gets the correct input) and one negative case (where it's given a bad input that might break it).
+
+Try to anticipate ways in which your functions might fail. Encode those into your test cases. If you encounter new and exciting ways in which your code breaks as you work, write more tests for those cases.
+
+Your development process should become an endless litany of writing code, then writing tests, then testing, then breaking, then writing more tests, then writing more code, and so on in an endless loop.
+
+Once you've got a whole pipeline running, write integration tests for the handoffs between your functions. Same thing applies as above. You might need to do some mocking - look that up. 
+
+End-to-end tests - you might need more complex testing techniques for this, or frameworks. If you have a webapp over your data, you can try something like Selenium. Otherwise, not my forte, consult your seniors. You might also need to set up a test environment with some test data. It's expensive time-wise, but this is why we write infrastructure as code (learn that also, if you can).
+
+Data validation tests - if you're writing in SQL, use DBT. If you're writing in Python, use Great Expectations. If you're writing in something else, I can't help you, not my forte, consult your seniors.
+
+Happy Friday folks, hope this helped!
+
+Tagging u/Recent-Luck-6238, u/FloLeicester, and u/givnv since you all asked!",237,49,ratczar,1745006512.0,https://www.reddit.com/r/dataengineering/comments/1k2e68y/some_of_you_arent_writing_tests_start_writing/,0.87,False,1745007864.0,False,False
+1k2hx59,I Don’t Like This Career. What are Some Reasonable Pivots?,"I am 28 with about 5 years of experience in data engineering and software engineering. I have a Masters in Data Science. I make $130K in a bad industry in a boring mid sized city. 
+
+I am a substantially different person than I was 10 years ago when I started college and went down this career and life path. I do not like anything to do with data or software engineering. 
+
+I also do not like engineering culture or the lifestyle of tech/engineering. 
+
+My thought would be to get a T7 MBA and pivot into some sort of VC or product role, but I don’t think I can get into any of these programs and the cost is high. 
+
+
+What are some reasonable career pivots from here? Product and project management seem dead. Don’t have the prestige or MBA to get into the VC world. A little too old to go back to school and repurpose in another high skill field like medicine or architecture. ",73,100,Acrobatic_Intern3047,1745016606.0,https://www.reddit.com/r/dataengineering/comments/1k2hx59/i_dont_like_this_career_what_are_some_reasonable/,0.8,False,False,False,False
+1k29a8t,Are Data Analyst Roles Becoming Too Much Like Data Engineering?,"Lately, I’ve noticed that almost every job posting for a Data Analyst or BI role requires knowledge of DWH, ETL processes, Airflow, and dbt.
+
+Does this mean these roles are now expected to handle data engineering tasks as well? Is the line between data analysts and data engineers disappearing?
+
+Personally, I love data engineering and dislike working on visualizations, dashboards, and diving deep into business metrics. I enjoy the technical side more, and I’m worried that being a “pure” data engineer is becoming less viable.
+
+As a final-year student, should I consider shifting from data engineering to a different field entirely? Would love to hear some honest opinions or advice from people already in the industry.",62,49,MazenMohamed1393,1744994140.0,https://www.reddit.com/r/dataengineering/comments/1k29a8t/are_data_analyst_roles_becoming_too_much_like/,0.96,False,False,False,False
+1k2so1d,Is cloud repatriation a thing in your country?,I am living and working in Europe where most companies are still trying to figure out if they should and could move their operations to the cloud. Other countries like the US seem to be further ahead / less regulated. I heard about companies starting to take some compute intense workloads back from cloud to on premise or private clouds or at least to solutions that don’t penalize you with consumption based pricing on these workloads. So is this a trend that you are experiencing in your line of work and what is your solution? Thinking mainly about analytical workloads.,20,25,wenz0401,1745055939.0,https://www.reddit.com/r/dataengineering/comments/1k2so1d/is_cloud_repatriation_a_thing_in_your_country/,0.86,False,1745057135.0,False,False
+1k2pvc3,Stay in Data Engineering vs Switch to Full Stack?,"I am currently a Data Engineer and recently got an opportunity to switch to full stack, what do you think? 
+
+Background: In the US. 1 year Data Engineer, 2 years of Data Analytics. While I seem to have some years of data experience, the experience gained from the Data Analytics role was more business than technical, so I consider myself with 1 year of technical experience.  
+
+Data Engineer (current role): 
+
+\- Current company: 500 people in financial services
+
+\- Tech Stack: Python, SQL, AWS, Airflow, Spark
+
+\- While my team does have a lot of traditional data engineering work like building data pipelines, data modelling etc, my focus over the past year has always been building internal AI applications, from building mechanism to ingest different types of data into datalake, creating vector database, building RAG pipelines, prompt engineering, creating resources on the cloud, to backend and small amount of front end development. 
+
+\- Potentially less saturated and more in-demand in the future given AI?
+
+\- While my interest is more in building AI applications and less about writing SQL, not sure if this will impact my job search in the future if future employers want someone with strong SQL, Spark experience, traditional data engineering experience? 
+
+
+
+Full Stack Engineer (potential switch):
+
+\- MNC (10000+) in tier-one consulting company 
+
+\- Tech Stack: Python, FastAPI, TypeScript, React, Svelte, AWS, Azure
+
+\- Focus will be on full stack development on a wide diversity of internal projects that emphasise building zero-to-one kind of web apps for internal stakeholders.  
+
+\- I am interested in building new things from ground up, so this role seems to be more interesting
+
+\- May give me more relevant skills to build new business in the future potentially? 
+
+\- May be more saturated in the future given AI?
+
+
+
+Comp and location are more of less the same, so overall it's a tough choice to me...",15,13,poshboysss,1745043796.0,https://www.reddit.com/r/dataengineering/comments/1k2pvc3/stay_in_data_engineering_vs_switch_to_full_stack/,0.79,False,False,False,False
+1k2gr7a,2025 Data Engine Ranking,"\[Analytics Engine\] StarRocks > ClickHouse > Presto > Trino > Spark
+
+\[ML Engine\] Ray > Spark > Dask
+
+\[Stream Processing Engine\] Flink > Spark > Kafka
+
+In the midst of all the marketing noise, it is difficult to choose the right data engine for your use case. Three blog posts published yesterday conduct deep and comprehensive comparisons of various engines from an unbiased third-party perspective.
+
+Despite the lack of head-to-head benchmarking, these posts still offer so many different critical angles to consider when evaluating. They also cover fundamental concepts that span outside these specific engines. I’m bookmarking these links as cheatsheets for my side project.
+
+ML Engine Comparison: [https://www.onehouse.ai/blog/apache-spark-vs-ray-vs-dask-comparing-data-science-machine-learning-engines](https://www.onehouse.ai/blog/apache-spark-vs-ray-vs-dask-comparing-data-science-machine-learning-engines)
+
+Analytics Engine Comparison: [https://www.onehouse.ai/blog/apache-spark-vs-clickhouse-vs-presto-vs-starrocks-vs-trino-comparing-analytics-engines](https://www.onehouse.ai/blog/apache-spark-vs-clickhouse-vs-presto-vs-starrocks-vs-trino-comparing-analytics-engines)
+
+Stream Processing Comparison: [https://www.onehouse.ai/blog/apache-spark-structured-streaming-vs-apache-flink-vs-apache-kafka-streams-comparing-stream-processing-engines](https://www.onehouse.ai/blog/apache-spark-structured-streaming-vs-apache-flink-vs-apache-kafka-streams-comparing-stream-processing-engines)",13,3,noninertialframe96,1745013326.0,https://www.reddit.com/r/dataengineering/comments/1k2gr7a/2025_data_engine_ranking/,0.68,False,False,False,False
+1k2ln56,At what YOE do you think its hard to switch industries?,"I’m currently working in the Consumer packaged goods industry as a data analyst with 2 years of experience. I want to try switching industries and working somewhere else as I think my career potential is limited in CPG. For anyone who’s done something similar do you think there’s a point where other industries might not take a chance on you? Also was curious to hear any stories people had of switching industries later in your career if you pulled it off
+
+My hunch is that it’s somewhere around 5-6 years since I won’t have enough domain knowledge to be useful so they wouldn’t want to hire someone like that",11,17,katokk,1745028213.0,https://www.reddit.com/r/dataengineering/comments/1k2ln56/at_what_yoe_do_you_think_its_hard_to_switch/,0.75,False,False,False,False
+1k2tgbe,Why do I see Iceberg pipeline with spark AND trino?,"I understand that a company like starburst would take the time and effort to configure in their product Spark for transformation and Trino for querying, but I don’t understand what is the “real” benefits of this.
+
+Very new to the iceberg space so please tell me if there’s something obvious here.
+
+After reading many many post on the web I found out that people agree that Spark is a better transformation engine while Trino is a better query engine.
+
+People seem to use both and I don’t understand why after reading so many different things.
+
+It seems like what comes back is that Spark is more than just a transformation engine, and you can use it for a bunch of other stuff. What are those other stuff and does it still apply if you have a proper orchestrator ?
+
+Why would people take the time and effort to support 2 tools, 2 query engine, 2 configs if it’s just for a couple more increase in performance using Spark va Trino?
+
+Maybe I’m missing the big point here. Is the increase in performance so high than it’s not worth just doing it in Trino ? And then if that’s the case is Spark so bad a ad-hoc query that it cannot replace Trino for most of the company because it’s very painful to use SparkSQL?
+
+",10,8,Commercial_Dig2401,1745059370.0,https://www.reddit.com/r/dataengineering/comments/1k2tgbe/why_do_i_see_iceberg_pipeline_with_spark_and_trino/,1.0,False,False,False,False
+1k2pxy0,People who self-learned data engineering without prior experience: how did you get a job?what steps you took to get a job?,Same as above ,10,16,_winter_rabbit_,1745044094.0,https://www.reddit.com/r/dataengineering/comments/1k2pxy0/people_who_selflearned_data_engineering_without/,0.78,False,False,False,False
+1k2cu9a,xorq: open source composite data engine framework,"composite data engines are a new twist on ML pipelines - they wrap data processing and transformation logic with caching and runtime execution to make multi-engine workflows easier to build and deploy.
+
+xorq (https://github.com/xorq-labs/xorq) is an open source framework for building composite engines. Here's an example that uses xorq to run DuckDB AsOf joins on Trino data (which does not support AsOf). 
+
+[https://www.xorq.dev/posts/trino-duckdb-asof-join](https://www.xorq.dev/posts/trino-duckdb-asof-join)
+
+Would love your feedback and questions on xorq and composite data engines!",7,4,databACE,1745003060.0,https://www.reddit.com/r/dataengineering/comments/1k2cu9a/xorq_open_source_composite_data_engine_framework/,0.9,False,False,False,False
+1k2w0yj,Would taking a small pay cut & getting a masters in computer science be worth it?,"Some background: I'm currently a business intelligence developer looking to break into DE. I work virtually and our company is unfortunately very siloed so there's not much opportunity to transition within the company.
+
+I've been looking at a business intelligence analyst role at a nearby university that would give me free tuition for a masters if I were to accept. It would be about a 10K pay cut, but I would get 35K in savings over 2 years with the masters and of course hopefully learn enough/ build a portfolio of projects that could get me a DE role. Would this be worth it, or should I be doing something else?",6,16,TST_150,1745068552.0,https://www.reddit.com/r/dataengineering/comments/1k2w0yj/would_taking_a_small_pay_cut_getting_a_masters_in/,0.75,False,False,False,False
+1k2wufq,How are you guys testing your code on the cloud with limited access?,"The code at our application is poorly covered by test cases. A big part of that is that we don't have access on our work computers to a lot of what we need to test.
+
+At our company, access to the cloud is very heavily guarded. A lot of what we need is hosted on that cloud, specially secrets for DB connections and S3 access. These things cannot be accessed from our laptops and are only availble when the code is already running on EMR.
+
+A lot of what we do test depends on those inccessible parts so we just mock a good response but I feel that that is meaning part of the point of the test, since we are not testing that the DB/S3 parts are working properly.
+
+I want to start building a culture of always including tests, but until the access part is realsolved, I do not think the other DE will comply.
+
+How are you guys testing your DB code when the DB is inaccessible locally? Keep in mind, that we cannot just have a local DB as that would require a lot of extra maintenance and manual synching of the DBs, more over, the dummy DB would need to be accesible in the CICD pipeline building the code, so it must easily portable (we actually tried this, by using DuckDB as the local DB but had issues with it, maybe I will post about that on another thread).
+
+Set up:
+Cloud - AWS
+Running Env - EMR
+DB - Aurora PG
+Language - Scala
+Test Liv - ScalaTest + Mockito
+
+The main blockers:
+No access Secrets
+No access to S3
+No access to AWS CLI to interact with S3
+Whatever solution, must be light weight
+Solution must be fully storable in same repo
+Solution must be triggerable in CICD pipeline.
+
+
+BTW, i believe that the CI/CD pipeline has full access to AWS, the problem is enabling testing on our laptops and then the same setup must work on the CICD pipeline.
+
+
+
+",4,8,davf135,1745071034.0,https://www.reddit.com/r/dataengineering/comments/1k2wufq/how_are_you_guys_testing_your_code_on_the_cloud/,0.75,False,False,False,False
+1k2exrn,GizmoEdge - a Distributed IoT SQL Engine,"# 🚀 Introducing GizmoEdge: Distributed SQL Powered by IoT Devices!
+
+Hi Reddit 👋,
+
+I'm **Philip Moore** — founder of **GizmoData**, and creator of **GizmoEdge** — a *Distributed SQL Engine* powered by *Internet-of-Things (IoT)* devices. 🌎📡
+
+# 🔥 What is GizmoEdge?
+
+**GizmoEdge** is a **prototype application** that lets you run **SQL queries distributed across multiple devices** — including:
+
+* 🐧 Linux
+* 🍎 macOS
+* 📱 iOS / iPadOS
+* 🐳 Kubernetes Pods
+* 🍓 Raspberry Pis
+* ... and more!
+
+I've built a **front-end app** where you can issue distributed SQL queries right now:  
+👉 [https://gizmoedge.gizmodata.com](https://gizmoedge.gizmodata.com/)
+
+# 📲 Want to Join the Collective?
+
+If you have an **Apple device**, you can install the **GizmoEdge Worker** app here:  
+👉 [Download on the App Store](https://apps.apple.com/us/app/gizmoedge/id6738658135)
+
+# ✨ How it Works:
+
+* Install the app.
+* Connect it to the running GizmoEdge server (super easy — just tap the little blue *server* icon next to the GizmoData logo!).
+* Credentials are **pre-filled** — just click the **""Connect WebSocket""** button! 🛜
+* The app downloads a shard of **TPC-H** data (\~1GB footprint, compressed as **Parquet** in a **ZStandard** `.tar.zst` file).
+* It builds a **DuckDB** database locally.
+* 🔥 *While the app is open and in the foreground*, your device becomes an active **worker** participating in distributed SQL queries!
+
+When you issue SQL queries via the app at [gizmoedge.gizmodata.com](https://gizmoedge.gizmodata.com/), your device will help execute them (if connected and ready)!
+
+# 🔒 Tech Stack Highlights
+
+* **Workers:** DuckDB 🦆
+* **Communication:** WebSockets (for low-latency 🔥)
+* **Security:** TLS encryption + ""Trust-but-Verify"" handshake model 🔐
+
+# 🛠️ Links to Get Started
+
+* 🎯 GizmoEdge SQL Navigator: [https://gizmoedge.gizmodata.com](https://gizmoedge.gizmodata.com/)
+* 📱 GizmoEdge Worker (App Store): [https://apps.apple.com/us/app/gizmoedge/id6738658135](https://apps.apple.com/us/app/gizmoedge/id6738658135)
+* 🏠 GizmoEdge Homepage: [https://gizmodata.com/gizmoedge](https://gizmodata.com/gizmoedge)
+
+# 🙏 A Small Ask
+
+This is an **early prototype** — it's currently **read-only** and **not production-ready yet**. But I'd be truly **honored** if folks could try it out and share feedback! 💬
+
+I'm actively working on improvements — including **easy ingestion pipelines** for custom datasets in the future!
+
+Thank you so much for reading and supporting!  
+Cheers,  
+**Philip** ✨",3,6,Adventurous-Visit161,1745008492.0,https://www.reddit.com/r/dataengineering/comments/1k2exrn/gizmoedge_a_distributed_iot_sql_engine/,0.64,False,False,False,False
+1k2b58i,Business analyst responsibilities on a data engineering team,"I work on a team of 1 lead engineer, 4 data engineers, 2 quality engineers, 1 product owner, 1 technology delivery leader and 1 scrum master.  We maintain a data lake for the enterprise. Our business analyst works with end users to gather requirements on sources they would like to add to the lake. If we have any additional questions on stories, she will facilitate the meetings between us and the end user. She works with our Product Owner on prioritizing stories but has limited knowledge of our product so planning is usually inefficient.
+
+For those who have a business analyst on your team, what are their responsibilities?",3,15,Annaphasia,1744998799.0,https://www.reddit.com/r/dataengineering/comments/1k2b58i/business_analyst_responsibilities_on_a_data/,0.72,False,False,False,False
+1k2w82b,Debugging Data Pipelines: From Memory to File with WebDAV (a self-hostable approach),"Not a new tool—just wiring up existing self-hosted stuff (dufs for WebDAV + Filestash + Collabora) to improve pipeline debugging.
+
+Instead of logging raw text or JSON, I write in-memory artifacts (Excel files, charts, normalized inputs, etc.) to a local WebDAV server. Filestash exposes it via browser, and Collabora handles previews. Debugging becomes: write buffer → push to WebDAV → open in UI.
+
+Feels like a DIY Google Drive for temp data, but fast and local.
+
+Write-up + code: [https://kunzite.cc/debugging-data-pipelines-with-webdav](https://kunzite.cc/debugging-data-pipelines-with-webdav)
+
+Curious how others handle short-lived debug artifacts.",3,0,Fun_Cell_3788,1745069176.0,https://www.reddit.com/r/dataengineering/comments/1k2w82b/debugging_data_pipelines_from_memory_to_file_with/,0.81,False,False,False,False
+1k2w4ef,Oracle ↔️ Postgres real-time bidirectional sync with different schemas,"
+Need help with what feels like mission impossible. We're migrating from Oracle to Postgres while both systems need to run simultaneously with real-time bidirectional sync. The schema structures are completely different.
+
+What solutions have actually worked for you? CDC tools, Kafka setups, GoldenGate, or custom jobs? 
+
+Most concerned about handling schema differences, conflict resolution, and maintaining performance under load.
+
+Any battle-tested advice from those who've survived this particular circle of database hell would be appreciated!​​​​​​​​​​​​​​​​",3,3,Optimal_Two6796,1745068844.0,https://www.reddit.com/r/dataengineering/comments/1k2w4ef/oracle_postgres_realtime_bidirectional_sync_with/,0.81,False,False,False,False
+1k2jruc,Data storage and dashboarding for fairly small company,"A company I’m working for wants to centralise CRM/Finance/Operations data in a data warehouse but only want to spend about £2000 a month. 
+
+Snowflake/Azure data warehouse has been proposed because we’ve found api connectivity with all systems we need, but from what I’ve read, the bill can go well into the 50k’s?
+
+They’re only expecting 1000 new data entries per month, so nothing huge is needed. Maybe periods of 5-10k entries in a few day period, maybe once a year. 
+
+Is data warehousing really the best solution here? ",5,5,Front_Background3634,1745022172.0,https://www.reddit.com/r/dataengineering/comments/1k2jruc/data_storage_and_dashboarding_for_fairly_small/,0.86,False,False,False,False
+1k2dtku,"Current State (MySQL, SSIS, SSAS, EC2) => Cloud","So like the title says, right now I'm working on a project that will be moving our current state to fully supported AWS or Azure cloud architecture. Right now we use some of AWS's products and have a number of VMs (EC2) set up with them for various things including our pseudo-data-warehouse.
+
+I'm leaning heavily toward jumping toward Fabric/OneLake - as my experience with AWS has been absolutely dreadful.
+
+If anyone has experience in making this switch in the current state of Fabric & OneLake and what are some of your suggestions when setting up this new architecture? I know this a very broad question, but I'm looking for things like:
+
+* What questions I should/could be asking in the RFP process with a few of these teams?
+* Maybe a tool that helped in the transition or documentation process as you prepare for your move.
+* If you started all-over-again when setting up your OneLake/Fabric ecosystem, what are some things you would like to have incorporated sooner?
+
+I already have a number of resources and some pieces built-out.... But more-so curious what others' experiences were.
+
+I'll take a McDouble with mac-sauce, medium fry, & an extra crispy large sprite.",1,5,Live-Problem-367,1745005614.0,https://www.reddit.com/r/dataengineering/comments/1k2dtku/current_state_mysql_ssis_ssas_ec2_cloud/,0.56,False,False,False,False
+1k2ogcj,Need advice: Certifications vs Passion Projects for Data Engineering Roles (US),"Hey folks,
+Looking for some perspective here.
+
+I’ve been working in a data engineering-adjacent role for about 3 years now. I kinda got thrown into it without any formal background in the field, but I’ve managed to find my footing along the way. I’m a US passport holder, though I currently work abroad, and I’m now starting to apply for roles in the US.
+
+Here’s what I’m wondering:
+From a recruiter’s point of view, what carries more weight - having certifications that show you understand the fundamentals (like a data engineering cert), or actively building passion projects that show interest and initiative outside of your day job?
+
+I still work a 9 to 5, so time is limited. Trying to figure out where to focus my energy as I ramp up the job search.
+
+Would love any thoughts or tips. Thanks in advance!",2,1,phantomoftheuvula,1745038136.0,https://www.reddit.com/r/dataengineering/comments/1k2ogcj/need_advice_certifications_vs_passion_projects/,0.63,False,False,False,False
+1k2cc1y,Step-by-step configuration of SQL Server Managed Instanc,# [https://medium.com/@Cloudbit003/step-by-step-configuration-of-sql-server-managed-instance-53d214247d39](https://medium.com/@Cloudbit003/step-by-step-configuration-of-sql-server-managed-instance-53d214247d39),2,1,jagaddjag,1745001770.0,https://www.reddit.com/r/dataengineering/comments/1k2cc1y/stepbystep_configuration_of_sql_server_managed/,0.6,False,False,False,False
+1k2uyva,What is cheaper cloud platform for data engineering at a SMB? AWS or GCP?,"I am a data analyst with 3 years of experience. 
+
+I am learning data engineering. My goal is to become a data engineer/ data analyst hybrid.
+
+I am currently learning the basics of AWS and GCP. I want to specifically use my cloud knowledge to create data warehouses for small/ mid sized businesses within two industries: 1) digital marketing and 2) tax accounting.
+
+Which cloud platform is cheaper for this use case - AWS or GCP?",1,10,Original_Chipmunk941,1745065114.0,https://www.reddit.com/r/dataengineering/comments/1k2uyva/what_is_cheaper_cloud_platform_for_data/,0.57,False,False,False,False
+1k2h91o,Resources for AWS data engineer associate,Hey guys. I’m a beginner in the whole data engineering subject . I have knowledge on python and SQL. Would be helpful if anyone could tell me the best way to get started for this cert and where u can find the best videos.I’m in college right now doing information systems technology ,0,2,Fit_Advantage_7237,1745014704.0,https://www.reddit.com/r/dataengineering/comments/1k2h91o/resources_for_aws_data_engineer_associate/,0.5,False,False,False,False
